@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FocusDesk Pro — Study Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#080D1C;--card:#111827;--card2:#0D1525;--card3:#161F30;
+  --indigo:#6C63FF;--lavender:#A5A0FF;--lavender2:#C5C2FF;
+  --gold:#F4C542;--mint:#3DDBA8;--rose:#FF6B8A;--cyan:#38BDF8;
+  --text:#E8EAFF;--text2:#B8BAD0;--muted:#5A5F7E;
+  --border:rgba(108,99,255,0.15);--border2:rgba(255,255,255,0.06);
+  --fd:'Space Grotesk',sans-serif;--fm:'JetBrains Mono',monospace;
+  --r:10px;--r2:14px;
+}
+body{background:var(--navy);color:var(--text);font-family:var(--fd);min-height:100vh;overflow-x:hidden}
+/* ===LAYOUT=== */
+.layout{display:flex;height:100vh;overflow:hidden}
+/* ===SIDEBAR=== */
+.sidebar{width:220px;background:var(--card2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0;flex-shrink:0;overflow-y:auto;scrollbar-width:none;transition:width 0.25s}
+.sidebar-brand{padding:20px 16px 16px;border-bottom:1px solid var(--border2)}
+.brand-logo{font-size:16px;font-weight:700;letter-spacing:-0.3px;display:flex;align-items:center;gap:8px}
+.brand-logo .dot{width:8px;height:8px;background:var(--indigo);border-radius:50%;box-shadow:0 0 8px var(--indigo)}
+.brand-badge{font-size:9px;background:rgba(244,197,66,0.15);color:var(--gold);border:1px solid rgba(244,197,66,0.25);padding:2px 7px;border-radius:4px;font-weight:600;letter-spacing:0.5px}
+.sidebar-user{padding:12px 14px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px}
+.user-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--lavender));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.user-name{font-size:12.5px;font-weight:600}
+.user-level{font-size:11px;color:var(--muted);margin-top:1px}
+.mini-xp{height:3px;background:var(--border);border-radius:99px;margin-top:6px;overflow:hidden}
+.mini-xp-fill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--lavender));border-radius:99px;transition:width 0.6s}
+.nav-section{padding:14px 12px 4px;font-size:10px;letter-spacing:1.2px;color:var(--muted);text-transform:uppercase;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:9px;margin:1px 8px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--text2);border:none;background:none;width:calc(100% - 16px);text-align:left;transition:all 0.15s;position:relative}
+.nav-item:hover{background:rgba(108,99,255,0.08);color:var(--text)}
+.nav-item.active{background:rgba(108,99,255,0.15);color:var(--lavender2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--indigo);border-radius:0 3px 3px 0;margin-left:-10px}
+.nav-item i{font-size:15px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+/* ===MAIN=== */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.topbar{padding:18px 24px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;flex-direction:column;gap:2px}
+.page-title{font-size:20px;font-weight:700;letter-spacing:-0.4px}
+.page-sub{font-size:12px;color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.content{padding:18px 24px 24px;flex:1}
+/* ===BUTTONS=== */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:12.5px;cursor:pointer;border:none;font-family:var(--fd);font-weight:500;transition:all 0.15s;white-space:nowrap}
+.btn-primary{background:var(--indigo);color:#fff}.btn-primary:hover{background:#7d75ff;transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,0.05);color:var(--text);border:1px solid var(--border2)}.btn-ghost:hover{background:rgba(255,255,255,0.09)}
+.btn-danger{background:rgba(255,107,138,0.1);color:var(--rose);border:1px solid rgba(255,107,138,0.2)}.btn-danger:hover{background:rgba(255,107,138,0.18)}
+.btn-mint{background:rgba(61,219,168,0.12);color:var(--mint);border:1px solid rgba(61,219,168,0.2)}.btn-mint:hover{background:rgba(61,219,168,0.2)}
+.btn-sm{padding:5px 10px;font-size:11.5px}
+/* ===CARDS=== */
+.card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r2);padding:18px}
+.card-title{font-size:12px;font-weight:600;color:var(--lavender);margin-bottom:14px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:0.5px}
+.card-title i{font-size:14px}
+/* ===GRID=== */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+/* ===STAT CARD=== */
+.stat-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r2);padding:16px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:0.06;transform:translate(20px,-20px)}
+.stat-val{font-size:24px;font-weight:700;font-family:var(--fm);letter-spacing:-0.5px}
+.stat-label{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-change{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px}
+.pos{color:var(--mint)}.neg{color:var(--rose)}.warn{color:var(--gold)}
+/* ===FORM=== */
+.inp{background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:var(--fd);outline:none;width:100%;transition:border-color 0.15s}
+.inp:focus{border-color:rgba(108,99,255,0.4);background:rgba(108,99,255,0.04)}
+.inp::placeholder{color:var(--muted)}
+textarea.inp{resize:vertical;min-height:90px;line-height:1.6}
+select.inp{appearance:none;cursor:pointer}
+.form-row{margin-bottom:14px}
+.form-label{font-size:11.5px;color:var(--muted);margin-bottom:6px;font-weight:500}
+/* ===PROGRESS=== */
+.prog{height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;transition:width 0.5s ease}
+/* ===TAG=== */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+/* ===MODAL=== */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:440px;max-width:94vw;max-height:85vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.5)}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.close-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:3px 7px;border-radius:6px;transition:all 0.15s}
+.close-btn:hover{color:var(--text);background:rgba(255,255,255,0.07)}
+/* ===TOAST=== */
+.toast-container{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--card3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:9px;opacity:0;transform:translateX(20px);transition:all 0.3s;pointer-events:none;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.toast.show{opacity:1;transform:translateX(0)}
+/* ===HABIT=== */
+.habit-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2)}
+.habit-row:last-child{border-bottom:none}
+.habit-day-btn{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border2);transition:all 0.15s;font-family:var(--fm);flex-shrink:0;color:var(--muted)}
+.habit-day-btn.done{border-color:transparent}
+.habit-day-btn:hover{opacity:0.8;transform:scale(1.05)}
+/* ===NOTE=== */
+.note-card{background:rgba(255,255,255,0.02);border:1px solid var(--border2);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.15s}
+.note-card:hover{border-color:rgba(108,99,255,0.3);background:rgba(108,99,255,0.04);transform:translateY(-1px)}
+.note-title{font-size:13px;font-weight:600;margin-bottom:5px;line-height:1.4}
+.note-body{font-size:12px;color:var(--text2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* ===GOAL=== */
+.goal-card{background:rgba(255,255,255,0.02);border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:10px;transition:border-color 0.15s}
+.goal-card:hover{border-color:rgba(108,99,255,0.25)}
+/* ===LEADERBOARD=== */
+.lb-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:9px;transition:background 0.15s}
+.lb-row:hover{background:rgba(255,255,255,0.03)}
+.lb-row.me{background:rgba(108,99,255,0.09);border:1px solid rgba(108,99,255,0.2)}
+.lb-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+/* ===XP=== */
+.xp-bar{height:10px;background:rgba(108,99,255,0.12);border-radius:99px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--lavender));border-radius:99px;transition:width 0.6s}
+.badge{padding:7px 12px;border-radius:9px;font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:6px;margin:4px}
+.badge.earned{background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.25);color:var(--lavender2)}
+.badge.locked{background:rgba(255,255,255,0.03);border:1px solid var(--border2);color:var(--muted)}
+/* ===POMODORO=== */
+.pomodoro-ring{position:relative;width:180px;height:180px;margin:0 auto}
+.pomodoro-ring svg{transform:rotate(-90deg)}
+.pomodoro-ring .ring-bg{fill:none;stroke:rgba(108,99,255,0.12);stroke-width:8}
+.pomodoro-ring .ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.pomodoro-time{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.pomo-time-val{font-size:32px;font-weight:700;font-family:var(--fm);letter-spacing:-1px}
+.pomo-time-label{font-size:11px;color:var(--muted);margin-top:2px}
+.pomo-modes{display:flex;gap:6px;justify-content:center;margin-bottom:18px}
+.pomo-mode{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border2);color:var(--muted);transition:all 0.15s;font-family:var(--fd)}
+.pomo-mode.active{background:rgba(108,99,255,0.18);border-color:rgba(108,99,255,0.4);color:var(--lavender2)}
+.pomo-controls{display:flex;gap:10px;justify-content:center;margin-top:20px}
+.pomo-btn{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:18px;transition:all 0.15s}
+.pomo-btn-main{background:var(--indigo);color:#fff}.pomo-btn-main:hover{background:#7d75ff;transform:scale(1.05)}
+.pomo-btn-sec{background:rgba(255,255,255,0.07);color:var(--text)}.pomo-btn-sec:hover{background:rgba(255,255,255,0.12)}
+.pomo-sessions{display:flex;gap:6px;justify-content:center;margin-top:14px}
+.pomo-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);transition:all 0.3s}
+.pomo-dot.done{background:var(--indigo)}
+/* ===HEATMAP=== */
+.heatmap-cell{width:13px;height:13px;border-radius:3px;transition:all 0.15s;cursor:default}
+.heatmap-cell:hover{transform:scale(1.3);z-index:1}
+/* ===SCROLLBAR=== */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+/* ===TABS=== */
+.page{display:none}
+.page.active{display:block}
+/* ===SECTION DIVIDER=== */
+.section-gap{height:16px}
+/* ===SUBJECT COLORS=== */
+.sub-DSA{background:rgba(108,99,255,0.12);color:#A5A0FF}
+.sub-OS{background:rgba(61,219,168,0.1);color:#3DDBA8}
+.sub-DBMS{background:rgba(244,197,66,0.1);color:#F4C542}
+.sub-Physics{background:rgba(255,107,138,0.1);color:#FF6B8A}
+.sub-CN{background:rgba(56,189,248,0.1);color:#38BDF8}
+.sub-Maths{background:rgba(250,200,80,0.1);color:#F9C240}
+/* ===EMPTY STATE=== */
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty i{font-size:36px;display:block;margin-bottom:10px;opacity:0.4}
+.empty-title{font-size:14px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.empty-sub{font-size:12px}
+/* ===STREAK FLAME=== */
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:0.8}}
+.flame{animation:flicker 1.5s ease-in-out infinite}
+/* ===RESPONSIVE=== */
+@media(max-width:768px){
+  .sidebar{width:60px}
+  .sidebar .brand-logo span:last-child,.sidebar .brand-badge,.sidebar-user .user-name,.sidebar-user .user-level,.sidebar-user .mini-xp,.nav-section,.nav-item span,.nav-badge{display:none}
+  .nav-item{justify-content:center;margin:1px 4px;width:calc(100% - 8px)}
+  .sidebar-brand{padding:14px 8px}
+  .sidebar-user{padding:10px 8px;justify-content:center}
+  .g3{grid-template-columns:1fr 1fr}
+  .g4{grid-template-columns:1fr 1fr}
+}
+/* ===DASHBOARD HIGHLIGHTS=== */
+.highlight-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:16px}
+.highlight-row::-webkit-scrollbar{display:none}
+.highlight-chip{flex-shrink:0;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px}
+.highlight-chip i{font-size:16px}
+/* ===TASK LIST=== */
+.task-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;transition:background 0.15s;cursor:pointer}
+.task-row:hover{background:rgba(255,255,255,0.03)}
+.task-check{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;cursor:pointer}
+.task-check.done{background:var(--mint);border-color:var(--mint)}
+.task-text{font-size:13px;flex:1}
+.task-text.done{text-decoration:line-through;color:var(--muted)}
+.task-sub{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <div class="dot"></div>
+        <span>FocusDesk</span>
+        <span class="brand-badge">PRO</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-av" id="userAv">--</div>
+      <div style="flex:1;min-width:0">
+        <div class="user-name" id="sidebarName">Scholar</div>
+        <div class="user-level" id="sidebarLevel">Level 1</div>
+        <div class="mini-xp"><div class="mini-xp-fill" id="miniXpFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="nav-section">Study</div>
+    <button class="nav-item active" onclick="nav('dashboard')"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
+    <button class="nav-item" onclick="nav('pomodoro')"><i class="ti ti-clock"></i><span>Pomodoro Timer</span><span class="nav-badge" id="pomoNavBadge" style="display:none;background:rgba(255,107,138,0.15);color:var(--rose)">●</span></button>
+    <button class="nav-item" onclick="nav('tasks')"><i class="ti ti-checklist"></i><span>Tasks</span><span class="nav-badge" id="taskNavBadge" style="background:rgba(108,99,255,0.15);color:var(--lavender)">0</span></button>
+    <button class="nav-item" onclick="nav('habits')"><i class="ti ti-calendar-check"></i><span>Habits</span></button>
+    <button class="nav-item" onclick="nav('notes')"><i class="ti ti-notes"></i><span>Study Notes</span></button>
+    <div class="nav-section">Progress</div>
+    <button class="nav-item" onclick="nav('goals')"><i class="ti ti-target"></i><span>Goals</span></button>
+    <button class="nav-item" onclick="nav('heatmap')"><i class="ti ti-flame"></i><span>Heatmap</span></button>
+    <button class="nav-item" onclick="nav('xp')"><i class="ti ti-star"></i><span>XP & Badges</span></button>
+    <button class="nav-item" onclick="nav('leaderboard')"><i class="ti ti-trophy"></i><span>Leaderboard</span></button>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ====== DASHBOARD ====== -->
+    <div id="page-dashboard" class="page active">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title" id="dashGreet">Good morning!</div>
+          <div class="page-sub" id="dashDate">Monday, 15 Jun 2026</div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost btn-sm" onclick="nav('pomodoro')"><i class="ti ti-clock"></i> Start Focus</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addTask')"><i class="ti ti-plus"></i> Add Task</button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- Quick stats -->
+        <div class="g4" id="dashStats" style="margin-bottom:16px"></div>
+        <!-- Quick highlights -->
+        <div class="highlight-row" id="dashHighlights"></div>
+        <!-- Main grid -->
+        <div class="g2" style="gap:16px">
+          <div>
+            <div class="card">
+              <div class="card-title"><i class="ti ti-checklist"></i> Today's tasks</div>
+              <div id="dashTasks"></div>
+              <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%;justify-content:center" onclick="nav('tasks')"><i class="ti ti-arrow-right"></i> All tasks</button>
+            </div>
+            <div class="section-gap"></div>
+            <div class="card">
+              <div class="card-title"><i class="ti ti-calendar-check"></i> Today's habits</div>
+              <div id="dashHabits"></div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-title"><i class="ti ti-target"></i> Active goals</div>
+              <div id="dashGoals"></div>
+              <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%;justify-content:center" onclick="nav('goals')"><i class="ti ti-arrow-right"></i> All goals</button>
+            </div>
+            <div class="section-gap"></div>
+            <div class="card" style="background:linear-gradient(135deg,rgba(108,99,255,0.1),rgba(108,99,255,0.04));border-color:rgba(108,99,255,0.25)">
+              <div class="card-title" style="color:var(--lavender2)"><i class="ti ti-clock"></i> Focus timer</div>
+              <div style="text-align:center;padding:14px 0">
+                <div style="font-size:36px;font-weight:700;font-family:var(--fm);color:var(--lavender2)" id="dashPomoTime">25:00</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px" id="dashPomoStatus">Not started</div>
+                <button class="btn btn-primary" style="margin-top:14px" onclick="nav('pomodoro')"><i class="ti ti-player-play"></i> Open Timer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== POMODORO ====== -->
+    <div id="page-pomodoro" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Pomodoro Timer</div>
+          <div class="page-sub">Stay focused, take breaks</div>
+        </div>
+        <div class="topbar-right">
+          <span class="tag" style="background:rgba(61,219,168,0.1);color:var(--mint)"><i class="ti ti-flame" style="font-size:11px"></i> <span id="pomoDayTotal">0</span> sessions today</span>
+        </div>
+      </div>
+      <div class="content">
+        <div class="g2" style="gap:16px">
+          <div>
+            <div class="card" style="text-align:center">
+              <div class="pomo-modes">
+                <button class="pomo-mode active" onclick="setPomoMode('focus',25)" id="pm-focus">Focus</button>
+                <button class="pomo-mode" onclick="setPomoMode('short',5)" id="pm-short">Short break</button>
+                <button class="pomo-mode" onclick="setPomoMode('long',15)" id="pm-long">Long break</button>
+              </div>
+              <div class="pomodoro-ring">
+                <svg viewBox="0 0 180 180" width="180" height="180">
+                  <circle class="ring-bg" cx="90" cy="90" r="80"/>
+                  <circle class="ring-fill" id="pomoRing" cx="90" cy="90" r="80"
+                    stroke="var(--indigo)"
+                    stroke-dasharray="502.65"
+                    stroke-dashoffset="0"/>
+                </svg>
+                <div class="pomodoro-time">
+                  <div class="pomo-time-val" id="pomoDisplay">25:00</div>
+                  <div class="pomo-time-label" id="pomoModeLabel">Focus session</div>
+                </div>
+              </div>
+              <div class="pomo-controls">
+                <button class="pomo-btn pomo-btn-sec" onclick="resetPomo()" title="Reset"><i class="ti ti-rotate-clockwise"></i></button>
+                <button class="pomo-btn pomo-btn-main" onclick="togglePomo()" id="pomoPlayBtn" title="Start"><i class="ti ti-player-play"></i></button>
+                <button class="pomo-btn pomo-btn-sec" onclick="skipPomo()" title="Skip"><i class="ti ti-player-skip-forward"></i></button>
+              </div>
+              <div class="pomo-sessions" id="pomoSessions"></div>
+              <div style="font-size:11px;color:var(--muted);margin-top:12px">Session <span id="pomoSessionNum">1</span> of 4</div>
+            </div>
+            <div class="section-gap"></div>
+            <div class="card">
+              <div class="card-title"><i class="ti ti-settings"></i> Timer settings</div>
+              <div class="g3" style="gap:10px">
+                <div><div class="form-label">Focus (min)</div><input class="inp" type="number" id="setFocus" value="25" min="5" max="90" onchange="updateSettings()"/></div>
+                <div><div class="form-label">Short break</div><input class="inp" type="number" id="setShort" value="5" min="1" max="30" onchange="updateSettings()"/></div>
+                <div><div class="form-label">Long break</div><input class="inp" type="number" id="setLong" value="15" min="5" max="60" onchange="updateSettings()"/></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title"><i class="ti ti-list-check"></i> Focus on task</div>
+              <div id="pomoTaskList"></div>
+              <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%;justify-content:center" onclick="openModal('addTask')"><i class="ti ti-plus"></i> Add task</button>
+            </div>
+            <div class="card">
+              <div class="card-title"><i class="ti ti-chart-bar"></i> Today's sessions</div>
+              <div id="pomoLog"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== TASKS ====== -->
+    <div id="page-tasks" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Tasks</div>
+          <div class="page-sub" id="taskSubtitle">0 pending</div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost btn-sm" onclick="clearCompletedTasks()"><i class="ti ti-trash"></i> Clear done</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addTask')"><i class="ti ti-plus"></i> New task</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="g2" style="gap:16px">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-circle"></i> Pending</div>
+            <div id="taskPending"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-circle-check"></i> Completed</div>
+            <div id="taskDone"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== HABITS ====== -->
+    <div id="page-habits" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Habit Tracker</div>
+          <div class="page-sub">Build consistency, day by day</div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="openModal('addHabit')"><i class="ti ti-plus"></i> Add habit</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="g2" style="margin-bottom:16px">
+          <div class="stat-card"><div class="stat-val warn" id="habitStreakVal">0</div><div class="stat-label">Day streak 🔥</div><div class="stat-change warn"><i class="ti ti-flame" style="font-size:12px"></i> Keep it going!</div></div>
+          <div class="stat-card"><div class="stat-val pos" id="habitRateVal">0%</div><div class="stat-label">30-day completion</div><div class="stat-change pos" id="habitRateChange">Building habits</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-repeat"></i> This week</div>
+          <div id="habitList"></div>
+          <div class="empty" id="habitEmpty" style="display:none"><i class="ti ti-calendar-check"></i><div class="empty-title">No habits yet</div><div class="empty-sub">Add your first habit to get started</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== NOTES ====== -->
+    <div id="page-notes" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Study Notes</div>
+          <div class="page-sub" id="noteCount">0 notes</div>
+        </div>
+        <div class="topbar-right">
+          <input class="inp" id="noteSearch" placeholder="Search notes…" style="width:180px;font-size:12px;padding:7px 11px" oninput="renderNotes()"/>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addNote')"><i class="ti ti-plus"></i> New note</button>
+        </div>
+      </div>
+      <div class="content">
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px" id="noteFilters"></div>
+        <div id="noteGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px"></div>
+        <div class="empty" id="noteEmpty" style="display:none"><i class="ti ti-notes"></i><div class="empty-title">No notes yet</div><div class="empty-sub">Create your first study note</div></div>
+      </div>
+    </div>
+
+    <!-- ====== GOALS ====== -->
+    <div id="page-goals" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Study Goals</div>
+          <div class="page-sub">Track your targets</div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="openModal('addGoal')"><i class="ti ti-plus"></i> New goal</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="g2" style="margin-bottom:16px">
+          <div class="stat-card"><div class="stat-val pos" id="goalOnTrack">0/0</div><div class="stat-label">Goals on track</div><div class="stat-change pos">Making progress</div></div>
+          <div class="stat-card"><div class="stat-val warn" id="goalNearDeadline">—</div><div class="stat-label">Nearest deadline</div><div class="stat-change warn" id="goalDaysLeft"></div></div>
+        </div>
+        <div id="goalList"></div>
+        <div class="empty" id="goalEmpty" style="display:none"><i class="ti ti-target"></i><div class="empty-title">No goals set</div><div class="empty-sub">Create your first study goal</div></div>
+      </div>
+    </div>
+
+    <!-- ====== HEATMAP ====== -->
+    <div id="page-heatmap" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Activity Heatmap</div>
+          <div class="page-sub">Your study patterns over time</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="card" style="margin-bottom:16px;overflow-x:auto">
+          <div class="card-title"><i class="ti ti-flame"></i> Study activity — last 6 months</div>
+          <div style="display:flex;gap:4px;margin-bottom:6px;font-size:10px;color:var(--muted)">
+            <div id="heatMonthLabels" style="display:flex;gap:0;overflow:hidden"></div>
+          </div>
+          <div style="display:flex;gap:4px">
+            <div style="display:flex;flex-direction:column;gap:3px;margin-top:2px">
+              <div style="font-size:9px;color:var(--muted);height:13px;line-height:13px">Mon</div>
+              <div style="height:13px"></div>
+              <div style="font-size:9px;color:var(--muted);height:13px;line-height:13px">Wed</div>
+              <div style="height:13px"></div>
+              <div style="font-size:9px;color:var(--muted);height:13px;line-height:13px">Fri</div>
+              <div style="height:13px"></div>
+              <div style="font-size:9px;color:var(--muted);height:13px;line-height:13px">Sun</div>
+            </div>
+            <div id="heatmapGrid" style="display:flex;gap:3px;overflow-x:auto;padding-bottom:6px"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--muted)">
+            Less
+            <div style="display:flex;gap:3px" id="heatLegend"></div>
+            More
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-clock"></i> Best study hours</div>
+            <div id="hourChart"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-calendar-week"></i> Study by day</div>
+            <div id="dayChart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== XP ====== -->
+    <div id="page-xp" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">XP & Achievements</div>
+          <div class="page-sub">Your progress milestones</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:18px;margin-bottom:18px">
+            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(108,99,255,0.3),rgba(108,99,255,0.08));border:2px solid var(--indigo);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--lavender2);flex-shrink:0" id="xpLevelCircle">1</div>
+            <div style="flex:1">
+              <div style="font-size:17px;font-weight:700" id="xpLevelLabel">Level 1 — Freshman</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:3px" id="xpSubLabel">0 / 300 XP to Level 2</div>
+              <div class="xp-bar" style="margin-top:10px"><div class="xp-fill" id="xpBarFill" style="width:0%"></div></div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-size:11px;color:var(--muted)">Total XP</div>
+              <div style="font-size:22px;font-weight:700;font-family:var(--fm);color:var(--gold)" id="xpTotal">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="g2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-star"></i> XP breakdown</div>
+            <div id="xpSources"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-podium"></i> Level roadmap</div>
+            <div id="levelRoadmap"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-award"></i> Badges</div>
+          <div id="badgeGrid" style="display:flex;flex-wrap:wrap;padding-top:4px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== LEADERBOARD ====== -->
+    <div id="page-leaderboard" class="page">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Leaderboard</div>
+          <div class="page-sub">Jun 9–15, 2026 · IIT Delhi cohort</div>
+        </div>
+        <div class="topbar-right">
+          <span class="tag" style="background:rgba(244,197,66,0.12);color:var(--gold)"><i class="ti ti-calendar-week" style="font-size:11px"></i> This week</span>
+        </div>
+      </div>
+      <div class="content">
+        <div class="g3" style="margin-bottom:16px">
+          <div class="stat-card"><div class="stat-val warn" id="lbMyRank">3rd</div><div class="stat-label">Your rank</div><div class="stat-change pos"><i class="ti ti-trending-up" style="font-size:11px"></i> Up 2 from last week</div></div>
+          <div class="stat-card"><div class="stat-val">32.4h</div><div class="stat-label">Your study hours</div><div class="stat-change warn">4.6h behind #1</div></div>
+          <div class="stat-card"><div class="stat-val pos">Top 8%</div><div class="stat-label">Percentile</div><div class="stat-change pos">IIT Delhi cohort</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-trophy"></i> Top scholars this week</div>
+          <div id="lbList"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .main -->
+</div><!-- end .layout -->
+
+<!-- ==MODALS== -->
+<div class="modal-bg" id="modal-addTask">
+  <div class="modal">
+    <div class="modal-title">Add task <button class="close-btn" onclick="closeModal('addTask')"><i class="ti ti-x"></i></button></div>
+    <div class="form-row"><div class="form-label">Task name *</div><input class="inp" id="tName" placeholder="e.g. Solve 5 DP problems"/></div>
+    <div class="form-row"><div class="form-label">Subject</div>
+      <select class="inp" id="tSub"><option>DSA</option><option>OS</option><option>DBMS</option><option>Physics</option><option>CN</option><option>Maths</option><option>Other</option></select></div>
+    <div class="form-row"><div class="form-label">Priority</div>
+      <select class="inp" id="tPriority"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('addTask')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTask()"><i class="ti ti-check"></i> Add task</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-addHabit">
+  <div class="modal">
+    <div class="modal-title">Add habit <button class="close-btn" onclick="closeModal('addHabit')"><i class="ti ti-x"></i></button></div>
+    <div class="form-row"><div class="form-label">Habit name *</div><input class="inp" id="hName" placeholder="e.g. Read for 30 minutes"/></div>
+    <div class="form-row"><div class="form-label">Category</div>
+      <select class="inp" id="hCat"><option>Study</option><option>Health</option><option>Mindfulness</option><option>Coding</option><option>Exercise</option></select></div>
+    <div class="form-row"><div class="form-label">Target days / week</div>
+      <select class="inp" id="hTarget"><option value="3">3 days</option><option value="4">4 days</option><option value="5">5 days</option><option value="7" selected>7 days (daily)</option></select></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('addHabit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveHabit()"><i class="ti ti-check"></i> Add habit</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-addNote">
+  <div class="modal">
+    <div class="modal-title">New note <button class="close-btn" onclick="closeModal('addNote')"><i class="ti ti-x"></i></button></div>
+    <div class="form-row"><div class="form-label">Title *</div><input class="inp" id="nTitle" placeholder="Note title"/></div>
+    <div class="form-row"><div class="form-label">Subject</div>
+      <select class="inp" id="nSub"><option>DSA</option><option>OS</option><option>DBMS</option><option>Physics</option><option>CN</option><option>Maths</option><option>Other</option></select></div>
+    <div class="form-row"><div class="form-label">Content</div><textarea class="inp" id="nBody" placeholder="Write your notes here…" style="min-height:120px"></textarea></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('addNote')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()"><i class="ti ti-check"></i> Save note</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-viewNote">
+  <div class="modal">
+    <div class="modal-title"><span id="vNoteTitle">Note</span> <button class="close-btn" onclick="closeModal('viewNote')"><i class="ti ti-x"></i></button></div>
+    <div style="margin-bottom:12px" id="vNoteMeta"></div>
+    <div style="font-size:13px;line-height:1.7;color:var(--text2);white-space:pre-wrap;background:rgba(255,255,255,0.02);border-radius:8px;padding:14px;margin-bottom:16px;max-height:300px;overflow-y:auto" id="vNoteBody"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-danger" onclick="deleteNote()"><i class="ti ti-trash"></i> Delete</button>
+      <button class="btn btn-ghost" onclick="closeModal('viewNote')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-addGoal">
+  <div class="modal">
+    <div class="modal-title">New goal <button class="close-btn" onclick="closeModal('addGoal')"><i class="ti ti-x"></i></button></div>
+    <div class="form-row"><div class="form-label">Goal name *</div><input class="inp" id="gName" placeholder="e.g. Complete DSA revision"/></div>
+    <div class="form-row"><div class="form-label">Subject</div>
+      <select class="inp" id="gSub"><option>DSA</option><option>OS</option><option>DBMS</option><option>Physics</option><option>CN</option><option>Maths</option><option>All subjects</option></select></div>
+    <div class="form-row"><div class="form-label">Target hours</div><input class="inp" type="number" id="gHrs" placeholder="50" min="1" max="1000"/></div>
+    <div class="form-row"><div class="form-label">Deadline</div><input class="inp" type="date" id="gDate"/></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('addGoal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveGoal()"><i class="ti ti-check"></i> Create goal</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-settings">
+  <div class="modal">
+    <div class="modal-title">Profile settings <button class="close-btn" onclick="closeModal('settings')"><i class="ti ti-x"></i></button></div>
+    <div class="form-row"><div class="form-label">Your name *</div><input class="inp" id="settingName" placeholder="e.g. Arjun Sharma"/></div>
+    <div class="form-row"><div class="form-label">Institute</div><input class="inp" id="settingInstitute" placeholder="e.g. IIT Delhi"/></div>
+    <div class="form-row"><div class="form-label">Study target (hours/day)</div><input class="inp" type="number" id="settingTarget" value="8" min="1" max="24"/></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('settings')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProfile()"><i class="ti ti-check"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ===================== STATE & STORAGE =====================
+const STORE = {
+  get(k){try{const v=localStorage.getItem('fd_'+k);return v?JSON.parse(v):null}catch{return null}},
+  set(k,v){try{localStorage.setItem('fd_'+k,JSON.stringify(v))}catch{}}
+};
+
+// Defaults
+function def(k,v){const e=STORE.get(k);if(e!==null)return e;STORE.set(k,v);return v;}
+
+let profile = def('profile',{name:'Scholar',institute:'IIT Delhi',targetHours:8});
+let tasks   = def('tasks',[
+  {id:1,name:'Solve 5 DP problems',sub:'DSA',priority:'High',done:false,created:Date.now()},
+  {id:2,name:'Read OS chapter 4',sub:'OS',priority:'Medium',done:false,created:Date.now()},
+  {id:3,name:'SQL practice queries',sub:'DBMS',priority:'Low',done:true,created:Date.now()},
+]);
+let habits  = def('habits',[
+  {id:1,name:'2 LeetCode problems',cat:'Coding',target:7,days:[1,1,1,1,1,0,1],col:'#6C63FF'},
+  {id:2,name:'Read textbook 30 min',cat:'Study',target:7,days:[1,1,0,1,1,1,1],col:'#3DDBA8'},
+  {id:3,name:'Morning exercise',cat:'Health',target:5,days:[1,1,1,1,0,0,1],col:'#FF6B8A'},
+  {id:4,name:'10 min meditation',cat:'Mindfulness',target:7,days:[1,0,1,1,1,1,1],col:'#F4C542'},
+]);
+let notes   = def('notes',[
+  {id:1,title:'Binary Search Patterns',sub:'DSA',body:'Key insight: always define search space clearly.\n\nLeft-biased: lo=mid+1, hi=mid. Use for first/last occurrence problems.\n\nwhile(lo < hi) {\n  int mid = lo + (hi-lo)/2;\n  if(cond) hi = mid;\n  else lo = mid+1;\n}',date:'Jun 12'},
+  {id:2,title:'Process Scheduling',sub:'OS',body:'FCFS: simple, convoy effect. SJF: optimal avg wait. Round Robin: fair, quantum matters. MLFQ: adaptive priorities.\n\nKey: Turnaround = Completion - Arrival, Waiting = Turnaround - Burst.',date:'Jun 11'},
+  {id:3,title:'SQL Joins cheatsheet',sub:'DBMS',body:'INNER JOIN: matching rows only\nLEFT JOIN: all from left + matches\nRIGHT JOIN: all from right + matches\nFULL OUTER: all rows both tables\nCROSS JOIN: cartesian product',date:'Jun 10'},
+  {id:4,title:'TCP vs UDP',sub:'CN',body:'TCP: connection-oriented, reliable, ordered, slower. Uses: HTTP, FTP, email.\nUDP: connectionless, fast. Uses: DNS, streaming, gaming.\nTCP header 20B, UDP 8B.',date:'Jun 9'},
+]);
+let goals   = def('goals',[
+  {id:1,name:'Complete DSA revision',sub:'DSA',target:50,done:38,deadline:'2026-06-30',col:'#6C63FF'},
+  {id:2,name:'Finish OS syllabus',sub:'OS',target:30,done:22,deadline:'2026-06-25',col:'#3DDBA8'},
+  {id:3,name:'Master SQL queries',sub:'DBMS',target:20,done:14,deadline:'2026-06-20',col:'#F4C542'},
+  {id:4,name:'100 LeetCode problems',sub:'DSA',target:100,done:67,deadline:'2026-07-15',col:'#6C63FF'},
+]);
+let xpData  = def('xp',{total:2840,sessions:5,tasksCompleted:8,habitsChecked:42,notesCreated:4,goalsLogged:14});
+let pomoData= def('pomo',{sessionsToday:0,logDate:'',log:[],totalMinutes:0});
+let nextId  = def('nextId',100);
+
+function genId(){const id=nextId++;STORE.set('nextId',nextId);return id;}
+function save(){
+  STORE.set('profile',profile);STORE.set('tasks',tasks);STORE.set('habits',habits);
+  STORE.set('notes',notes);STORE.set('goals',goals);STORE.set('xp',xpData);STORE.set('pomo',pomoData);
+}
+
+// ===================== XP SYSTEM =====================
+const LEVELS=[
+  {lvl:1,name:'Freshman',xp:0},{lvl:2,name:'Sophomore',xp:300},{lvl:3,name:'Junior',xp:700},
+  {lvl:4,name:'Senior',xp:1200},{lvl:5,name:'Graduate',xp:2000},{lvl:6,name:'Scholar',xp:3000},
+  {lvl:7,name:'Expert',xp:4500},{lvl:8,name:'Master',xp:6500},{lvl:9,name:'PhD Candidate',xp:9000},
+  {lvl:10,name:'Professor',xp:12000},{lvl:11,name:'Dean',xp:16000},{lvl:12,name:'Legendary',xp:21000},
+];
+function getLevelInfo(){
+  let lv=LEVELS[0];
+  for(let i=LEVELS.length-1;i>=0;i--){if(xpData.total>=LEVELS[i].xp){lv=LEVELS[i];break;}}
+  const next=LEVELS.find(l=>l.xp>xpData.total)||LEVELS[LEVELS.length-1];
+  const pct=lv.xp===next.xp?100:Math.round((xpData.total-lv.xp)/(next.xp-lv.xp)*100);
+  return {level:lv,next,pct};
+}
+function addXP(amount,reason){
+  xpData.total+=amount;save();
+  toast(`+${amount} XP — ${reason}`,true);
+  updateSidebar();
+}
+
+// ===================== NAV =====================
+let activePage='dashboard';
+function nav(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const items=document.querySelectorAll('.nav-item');
+  const map={dashboard:0,pomodoro:1,tasks:2,habits:3,notes:4,goals:5,heatmap:6,xp:7,leaderboard:8};
+  if(items[map[page]])items[map[page]].classList.add('active');
+  activePage=page;
+  renderPage(page);
+}
+function renderPage(p){
+  if(p==='dashboard')renderDashboard();
+  if(p==='tasks')renderTasks();
+  if(p==='habits')renderHabits();
+  if(p==='notes')renderNotes();
+  if(p==='goals')renderGoals();
+  if(p==='heatmap')renderHeatmap();
+  if(p==='xp')renderXP();
+  if(p==='leaderboard')renderLeaderboard();
+  if(p==='pomodoro')renderPomoPage();
+}
+
+// ===================== MODAL =====================
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');}
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+
+// ===================== TOAST =====================
+function toast(msg,isXP=false){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML=`<i class="ti ${isXP?'ti-star':'ti-check'}" style="color:${isXP?'var(--gold)':'var(--mint)'}"></i>${msg}`;
+  c.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2800);
+}
+
+// ===================== SIDEBAR =====================
+function updateSidebar(){
+  const li=getLevelInfo();
+  const initials=(profile.name||'S').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('userAv').textContent=initials;
+  document.getElementById('sidebarName').textContent=profile.name||'Scholar';
+  document.getElementById('sidebarLevel').textContent=`Level ${li.level.lvl} · ${li.level.name}`;
+  document.getElementById('miniXpFill').style.width=li.pct+'%';
+  document.getElementById('taskNavBadge').textContent=tasks.filter(t=>!t.done).length;
+}
+
+// ===================== DASHBOARD =====================
+const DAYS7=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const subColors={DSA:'#6C63FF',OS:'#3DDBA8',DBMS:'#F4C542',Physics:'#FF6B8A',CN:'#38BDF8',Maths:'#F9C240',Other:'#A5A0FF'};
+function subClass(sub){return 'sub-'+(subColors[sub]?sub:'DSA');}
+
+// renderDashboard defined below after all helpers
+
+function quickToggleHabit(id,di){
+  const h=habits.find(x=>x.id===id);
+  h.days[di]=h.days[di]?0:1;
+  save();
+  if(h.days[di])addXP(10,'Habit checked');
+  renderDashboard();
+  if(activePage==='habits')renderHabits();
+}
+
+// ===================== POMODORO =====================
+let pomoMode='focus';
+let pomoSecs=25*60;
+let pomoTotal=25*60;
+let pomoRunning=false;
+let pomoInterval=null;
+let pomoCycle=0; // 0-3 sessions before long break
+let pomoCurrent=0; // current session number
+
+const RING_CIRCUMFERENCE=502.65;
+
+function setPomoMode(mode,mins){
+  if(pomoRunning)return;
+  pomoMode=mode;
+  const settings={focus:parseInt(document.getElementById('setFocus').value)||25,short:parseInt(document.getElementById('setShort').value)||5,long:parseInt(document.getElementById('setLong').value)||15};
+  pomoTotal=settings[mode]*60;pomoSecs=pomoTotal;
+  document.querySelectorAll('.pomo-mode').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pm-'+mode).classList.add('active');
+  document.getElementById('pomoRing').setAttribute('stroke',mode==='focus'?'var(--indigo)':mode==='short'?'var(--mint)':'var(--cyan)');
+  document.getElementById('pomoModeLabel').textContent=mode==='focus'?'Focus session':mode==='short'?'Short break':'Long break';
+  updatePomoDisplay();
+}
+function updateSettings(){
+  if(!pomoRunning)setPomoMode(pomoMode,0);
+}
+function togglePomo(){
+  if(pomoRunning){
+    clearInterval(pomoInterval);pomoRunning=false;
+    document.getElementById('pomoPlayBtn').innerHTML='<i class="ti ti-player-play"></i>';
+    document.getElementById('pomoNavBadge').style.display='none';
+  } else {
+    pomoRunning=true;
+    document.getElementById('pomoPlayBtn').innerHTML='<i class="ti ti-player-pause"></i>';
+    document.getElementById('pomoNavBadge').style.display='inline';
+    pomoInterval=setInterval(pomoTick,1000);
+  }
+}
+function pomoTick(){
+  pomoSecs--;
+  updatePomoDisplay();
+  if(activePage==='dashboard')document.getElementById('dashPomoTime').textContent=formatTime(pomoSecs);
+  if(pomoSecs<=0){
+    clearInterval(pomoInterval);pomoRunning=false;
+    document.getElementById('pomoPlayBtn').innerHTML='<i class="ti ti-player-play"></i>';
+    document.getElementById('pomoNavBadge').style.display='none';
+    onPomoEnd();
+  }
+}
+function onPomoEnd(){
+  if(pomoMode==='focus'){
+    pomoCurrent++;
+    // Reset sessions today if new day
+    const today=new Date().toDateString();
+    if(pomoData.logDate!==today){pomoData.sessionsToday=0;pomoData.log=[];pomoData.logDate=today;}
+    pomoData.sessionsToday++;
+    pomoData.log.unshift({time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),mins:parseInt(document.getElementById('setFocus').value)||25});
+    pomoData.totalMinutes+=(parseInt(document.getElementById('setFocus').value)||25);
+    xpData.sessions++;save();
+    addXP(25,'Pomodoro session completed');
+    toast('🍅 Session complete! Take a break.');
+    pomoCycle=(pomoCycle+1)%4;
+    if(pomoCycle===0)setPomoMode('long',0);else setPomoMode('short',0);
+  } else {
+    toast('Break over. Ready to focus!');
+    setPomoMode('focus',0);
+  }
+  renderPomoPage();
+  if(activePage==='dashboard')renderDashboard();
+}
+function resetPomo(){clearInterval(pomoInterval);pomoRunning=false;document.getElementById('pomoPlayBtn').innerHTML='<i class="ti ti-player-play"></i>';document.getElementById('pomoNavBadge').style.display='none';setPomoMode(pomoMode,0);}
+function skipPomo(){clearInterval(pomoInterval);pomoRunning=false;document.getElementById('pomoPlayBtn').innerHTML='<i class="ti ti-player-play"></i>';document.getElementById('pomoNavBadge').style.display='none';onPomoEnd();}
+function updatePomoDisplay(){
+  document.getElementById('pomoDisplay').textContent=formatTime(pomoSecs);
+  const offset=RING_CIRCUMFERENCE*(1-pomoSecs/pomoTotal);
+  document.getElementById('pomoRing').setAttribute('stroke-dashoffset',offset);
+}
+function formatTime(s){const m=Math.floor(s/60);const sec=s%60;return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
+function renderPomoPage(){
+  document.getElementById('pomoDayTotal').textContent=pomoData.sessionsToday;
+  // Session dots
+  let dots='';for(let i=0;i<4;i++)dots+=`<div class="pomo-dot${i<pomoCycle?' done':''}"></div>`;
+  document.getElementById('pomoSessions').innerHTML=dots;
+  document.getElementById('pomoSessionNum').textContent=(pomoCycle%4)+1;
+  // Task list
+  const pending=tasks.filter(t=>!t.done).slice(0,6);
+  document.getElementById('pomoTaskList').innerHTML=pending.length?pending.map(t=>`<div class="task-row" onclick="toggleTask(${t.id})">${taskRowHTML(t,false)}</div>`).join(''):'<div style="font-size:12px;color:var(--muted);padding:8px 0">No pending tasks</div>';
+  // Log
+  document.getElementById('pomoLog').innerHTML=pomoData.log.length?pomoData.log.slice(0,5).map((l,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border2)"><div style="width:8px;height:8px;border-radius:50%;background:var(--indigo)"></div><span style="flex:1;font-size:12.5px">Session ${pomoData.sessionsToday-i}</span><span style="font-family:var(--fm);font-size:11px;color:var(--muted)">${l.time} · ${l.mins}min</span></div>`).join(''):'<div style="font-size:12px;color:var(--muted);padding:10px 0">No sessions logged today</div>';
+}
+
+// ===================== TASKS =====================
+function taskRowHTML(t,mini){
+  const pc={High:'var(--rose)',Medium:'var(--gold)',Low:'var(--mint)'};
+  return `<div class="task-row" onclick="toggleTask(${t.id})" style="border-bottom:1px solid var(--border2)">
+    <div class="task-check${t.done?' done':''}" onclick="toggleTask(${t.id});event.stopPropagation()">
+      ${t.done?'<i class="ti ti-check" style="font-size:10px;color:#fff"></i>':''}
+    </div>
+    <div style="flex:1;min-width:0">
+      <div class="task-text${t.done?' done':''}">${t.name}</div>
+      ${!mini?`<div class="task-sub"><span class="tag ${subClass(t.sub)}" style="font-size:10px;padding:2px 6px">${t.sub}</span></div>`:''}
+    </div>
+    <div style="width:8px;height:8px;border-radius:50%;background:${pc[t.priority]||'var(--muted)'};flex-shrink:0"></div>
+  </div>`;
+}
+function toggleTask(id){
+  const t=tasks.find(x=>x.id===id);
+  t.done=!t.done;
+  if(t.done){xpData.tasksCompleted++;addXP(15,'Task completed');}
+  save();renderTasks();
+  if(activePage==='dashboard')renderDashboard();
+  if(activePage==='pomodoro')renderPomoPage();
+  updateSidebar();
+}
+function saveTask(){
+  const name=document.getElementById('tName').value.trim();if(!name)return;
+  tasks.unshift({id:genId(),name,sub:document.getElementById('tSub').value,priority:document.getElementById('tPriority').value,done:false,created:Date.now()});
+  document.getElementById('tName').value='';
+  closeModal('addTask');save();renderTasks();
+  if(activePage==='dashboard')renderDashboard();
+  updateSidebar();toast('Task added');
+}
+function clearCompletedTasks(){tasks=tasks.filter(t=>!t.done);save();renderTasks();toast('Cleared completed tasks');}
+function renderTasks(){
+  const pending=tasks.filter(t=>!t.done);
+  const done=tasks.filter(t=>t.done);
+  document.getElementById('taskSubtitle').textContent=`${pending.length} pending · ${done.length} done`;
+  document.getElementById('taskPending').innerHTML=pending.length?pending.map(t=>taskRowHTML(t,false)).join(''):'<div class="empty" style="padding:24px"><i class="ti ti-circle-check" style="color:var(--mint)"></i><div class="empty-title">All caught up!</div></div>';
+  document.getElementById('taskDone').innerHTML=done.length?done.map(t=>taskRowHTML(t,false)).join(''):'<div class="empty" style="padding:24px"><i class="ti ti-list-check"></i><div class="empty-sub">No completed tasks</div></div>';
+}
+
+// ===================== HABITS =====================
+function saveHabit(){
+  const name=document.getElementById('hName').value.trim();if(!name)return;
+  const cols=['#6C63FF','#3DDBA8','#F4C542','#FF6B8A','#38BDF8','#A5A0FF'];
+  habits.push({id:genId(),name,cat:document.getElementById('hCat').value,target:parseInt(document.getElementById('hTarget').value),days:[0,0,0,0,0,0,0],col:cols[habits.length%cols.length]});
+  document.getElementById('hName').value='';
+  closeModal('addHabit');save();renderHabits();
+  if(activePage==='dashboard')renderDashboard();
+  toast('Habit added!');
+}
+function toggleHabit(id,di){
+  const h=habits.find(x=>x.id===id);
+  h.days[di]=h.days[di]?0:1;
+  save();
+  if(h.days[di]){xpData.habitsChecked++;addXP(10,'Habit checked');}
+  renderHabits();
+  if(activePage==='dashboard')renderDashboard();
+}
+function deleteHabit(id){habits=habits.filter(h=>h.id!==id);save();renderHabits();toast('Habit removed');}
+function renderHabits(){
+  const list=document.getElementById('habitList');
+  const empty=document.getElementById('habitEmpty');
+  if(!habits.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=habits.map(h=>{
+    const done=h.days.filter(Boolean).length;
+    const pct=Math.round(done/7*100);
+    return `<div class="habit-row">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <div style="width:9px;height:9px;border-radius:50%;background:${h.col};flex-shrink:0"></div>
+          <span style="font-size:13px;font-weight:500;flex:1">${h.name}</span>
+          <span class="tag" style="background:rgba(255,255,255,0.05);color:var(--muted);font-size:10px">${h.cat}</span>
+          <span style="font-family:var(--fm);font-size:11px;color:${h.col}">${done}/${h.target}</span>
+        </div>
+        <div style="display:flex;gap:4px">
+          ${DAYS7.map((d,i)=>`<div class="habit-day-btn${h.days[i]?' done':''}" style="${h.days[i]?'background:'+h.col+'22;border-color:'+h.col+';color:'+h.col:''}" onclick="toggleHabit(${h.id},${i})" title="${d}">${d[0]}</div>`).join('')}
+        </div>
+        <div class="prog" style="margin-top:7px"><div class="prog-fill" style="width:${pct}%;background:${h.col}"></div></div>
+      </div>
+      <button onclick="deleteHabit(${h.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;margin-left:12px;padding:4px;font-size:15px;border-radius:6px;transition:color 0.15s" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--muted)'"><i class="ti ti-trash"></i></button>
+    </div>`;
+  }).join('');
+
+  // Update streak & rate stats
+  const totalDone=habits.reduce((a,h)=>a+h.days.filter(Boolean).length,0);
+  const totalPossible=habits.reduce((a,h)=>a+h.target,0);
+  const rate=totalPossible?Math.round(totalDone/totalPossible*100):0;
+  document.getElementById('habitRateVal').textContent=rate+'%';
+  document.getElementById('habitStreakVal').textContent=Math.floor(totalDone/Math.max(habits.length,1));
+}
+
+// ===================== NOTES =====================
+let noteFilter='All';
+let activeNoteId=null;
+
+function saveNote(){
+  const title=document.getElementById('nTitle').value.trim();if(!title)return;
+  const now=new Date();
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  notes.unshift({id:genId(),title,sub:document.getElementById('nSub').value,body:document.getElementById('nBody').value||'(empty)',date:`${months[now.getMonth()]} ${now.getDate()}`});
+  document.getElementById('nTitle').value='';document.getElementById('nBody').value='';
+  xpData.notesCreated++;addXP(20,'Note created');
+  closeModal('addNote');save();renderNotes();toast('Note saved!');
+}
+function viewNote(id){
+  activeNoteId=id;
+  const n=notes.find(x=>x.id===id);
+  document.getElementById('vNoteTitle').textContent=n.title;
+  document.getElementById('vNoteMeta').innerHTML=`<span class="tag sub-${n.sub}" style="font-size:11px">${n.sub}</span> <span style="font-size:11px;color:var(--muted);margin-left:6px">${n.date}</span>`;
+  document.getElementById('vNoteBody').textContent=n.body;
+  openModal('viewNote');
+}
+function deleteNote(){notes=notes.filter(n=>n.id!==activeNoteId);closeModal('viewNote');save();renderNotes();toast('Note deleted');}
+function setNoteFilter(f){noteFilter=f;renderNotes();}
+function renderNotes(){
+  const search=(document.getElementById('noteSearch').value||'').toLowerCase();
+  const subs=['All',...new Set(notes.map(n=>n.sub))];
+  document.getElementById('noteFilters').innerHTML=subs.map(f=>`<button class="btn ${noteFilter===f?'btn-primary':'btn-ghost'} btn-sm" onclick="setNoteFilter('${f}')">${f}</button>`).join('');
+  let filtered=noteFilter==='All'?notes:notes.filter(n=>n.sub===noteFilter);
+  if(search)filtered=filtered.filter(n=>n.title.toLowerCase().includes(search)||n.body.toLowerCase().includes(search));
+  document.getElementById('noteCount').textContent=`${filtered.length} note${filtered.length!==1?'s':''}`;
+  const grid=document.getElementById('noteGrid');
+  const empty=document.getElementById('noteEmpty');
+  if(!filtered.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=filtered.map(n=>`
+    <div class="note-card" onclick="viewNote(${n.id})">
+      <div style="margin-bottom:7px"><span class="tag sub-${n.sub}" style="font-size:10.5px">${n.sub}</span></div>
+      <div class="note-title">${n.title}</div>
+      <div class="note-body">${n.body}</div>
+      <div style="font-size:10.5px;color:var(--muted);margin-top:9px;display:flex;align-items:center;gap:5px"><i class="ti ti-calendar" style="font-size:12px"></i>${n.date}</div>
+    </div>`).join('');
+}
+
+// ===================== GOALS =====================
+function saveGoal(){
+  const name=document.getElementById('gName').value.trim();if(!name)return;
+  const cols=['#6C63FF','#3DDBA8','#F4C542','#FF6B8A','#38BDF8'];
+  goals.push({id:genId(),name,sub:document.getElementById('gSub').value,target:parseInt(document.getElementById('gHrs').value)||30,done:0,deadline:document.getElementById('gDate').value,col:cols[goals.length%cols.length]});
+  document.getElementById('gName').value='';document.getElementById('gHrs').value='';
+  closeModal('addGoal');save();renderGoals();toast('Goal created! 🎯');
+}
+function logGoalHour(id){
+  const g=goals.find(x=>x.id===id);
+  if(g.done<g.target){g.done=Math.min(g.done+1,g.target);xpData.goalsLogged++;addXP(5,'Goal progress logged');save();renderGoals();toast(`+1h logged for "${g.name}"`);}
+}
+function deleteGoal(id){goals=goals.filter(g=>g.id!==id);save();renderGoals();toast('Goal removed');}
+function formatDate(d){if(!d)return 'No deadline';const dt=new Date(d);return dt.toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+function renderGoals(){
+  const list=document.getElementById('goalList');
+  const empty=document.getElementById('goalEmpty');
+  if(!goals.length){list.innerHTML='';empty.style.display='block';
+    document.getElementById('goalOnTrack').textContent='0/0';return;}
+  empty.style.display='none';
+  const onTrackCount=goals.filter(g=>Math.round(g.done/g.target*100)>40).length;
+  document.getElementById('goalOnTrack').textContent=`${onTrackCount}/${goals.length}`;
+  const sorted=[...goals].sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+  const nearest=sorted[0];
+  if(nearest&&nearest.deadline){
+    document.getElementById('goalNearDeadline').textContent=formatDate(nearest.deadline);
+    const diff=Math.ceil((new Date(nearest.deadline)-new Date())/(86400000));
+    document.getElementById('goalDaysLeft').textContent=diff>0?`${diff} days away`:'Past deadline';
+  }
+  list.innerHTML=goals.map(g=>{
+    const pct=Math.min(100,Math.round(g.done/g.target*100));
+    const onTrack=pct>40;
+    return `<div class="goal-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:13.5px;font-weight:600">${g.name}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px"><span class="tag sub-${g.sub}" style="font-size:10px;padding:2px 7px">${g.sub}</span> · Due ${formatDate(g.deadline)}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px">
+          <div style="font-family:var(--fm);font-size:14px;font-weight:600;color:${g.col}">${pct}%</div>
+          <div style="font-size:11px;color:var(--muted)">${g.done}/${g.target}h</div>
+        </div>
+      </div>
+      <div class="prog" style="margin-bottom:10px"><div class="prog-fill" style="width:${pct}%;background:${g.col}"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="tag" style="background:${onTrack?'rgba(61,219,168,0.1)':'rgba(255,107,138,0.1)'};color:${onTrack?'var(--mint)':'var(--rose)'};font-size:11px">
+          <i class="ti ${onTrack?'ti-trending-up':'ti-alert-triangle'}" style="font-size:11px"></i> ${onTrack?'On track':'Needs attention'}
+        </span>
+        <div style="display:flex;gap:6px">
+          <button onclick="logGoalHour(${g.id})" class="btn btn-ghost btn-sm"><i class="ti ti-plus"></i> Log 1h</button>
+          <button onclick="deleteGoal(${g.id})" class="btn btn-sm" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:5px 8px"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== HEATMAP =====================
+function renderHeatmap(){
+  const heatCols=['rgba(108,99,255,0.07)','rgba(108,99,255,0.2)','rgba(108,99,255,0.4)','rgba(108,99,255,0.65)','#6C63FF'];
+  const weeks=26;
+  let grid='';
+  const months=[];let lastMonth=-1;
+  for(let w=0;w<weeks;w++){
+    const d=new Date();d.setDate(d.getDate()-(weeks-1-w)*7);
+    const m=d.getMonth();
+    if(m!==lastMonth){months.push({label:d.toLocaleString('default',{month:'short'}),week:w});lastMonth=m;}
+    grid+='<div style="display:flex;flex-direction:column;gap:3px">';
+    for(let dy=0;dy<7;dy++){
+      const v=Math.random()>0.3?Math.floor(Math.random()*5):0;
+      grid+=`<div class="heatmap-cell" style="background:${heatCols[v]}" title="${v?v+'h study':'No study'}"></div>`;
+    }
+    grid+='</div>';
+  }
+  document.getElementById('heatmapGrid').innerHTML=grid;
+  // Legend
+  document.getElementById('heatLegend').innerHTML=heatCols.map(c=>`<div style="width:12px;height:12px;border-radius:3px;background:${c}"></div>`).join('');
+  // Bar charts
+  const hourData=[{h:'6AM',v:2},{h:'8AM',v:7},{h:'10AM',v:9},{h:'12PM',v:5},{h:'2PM',v:6},{h:'4PM',v:4},{h:'6PM',v:3},{h:'8PM',v:5},{h:'10PM',v:2}];
+  const mx=9;
+  document.getElementById('hourChart').innerHTML=`<div style="display:flex;align-items:flex-end;gap:5px;height:80px">${hourData.map(h=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;border-radius:4px 4px 0 0;background:rgba(108,99,255,${0.12+h.v/mx*0.7});height:${Math.round(h.v/mx*66)}px"></div><div style="font-size:8.5px;color:var(--muted);white-space:nowrap">${h.h}</div></div>`).join('')}</div>`;
+  const dayData=[{d:'Mon',v:5.1},{d:'Tue',v:6.8},{d:'Wed',v:4.2},{d:'Thu',v:5.9},{d:'Fri',v:4.5},{d:'Sat',v:2.8},{d:'Sun',v:3.5}];
+  const mx2=6.8;
+  document.getElementById('dayChart').innerHTML=`<div style="display:flex;align-items:flex-end;gap:5px;height:80px">${dayData.map(d=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;border-radius:4px 4px 0 0;background:${d.d==='Tue'?'var(--indigo)':'rgba(108,99,255,0.3)'};height:${Math.round(d.v/mx2*66)}px"></div><div style="font-size:9px;color:var(--muted)">${d.d}</div></div>`).join('')}</div>`;
+}
+
+// ===================== XP / BADGES =====================
+function renderXP(){
+  const li=getLevelInfo();
+  document.getElementById('xpLevelCircle').textContent=li.level.lvl;
+  document.getElementById('xpLevelLabel').textContent=`Level ${li.level.lvl} — ${li.level.name}`;
+  document.getElementById('xpSubLabel').textContent=`${xpData.total.toLocaleString()} / ${li.next.xp.toLocaleString()} XP to Level ${li.level.lvl+1}`;
+  document.getElementById('xpBarFill').style.width=li.pct+'%';
+  document.getElementById('xpTotal').textContent=xpData.total.toLocaleString();
+
+  const sources=[
+    {src:'Pomodoro sessions',xp:xpData.sessions*25,icon:'ti-clock',col:'var(--indigo)'},
+    {src:'Tasks completed',xp:xpData.tasksCompleted*15,icon:'ti-checklist',col:'var(--mint)'},
+    {src:'Habits checked',xp:xpData.habitsChecked*10,icon:'ti-calendar-check',col:'var(--gold)'},
+    {src:'Notes created',xp:xpData.notesCreated*20,icon:'ti-notes',col:'var(--lavender)'},
+    {src:'Goal progress logged',xp:xpData.goalsLogged*5,icon:'ti-target',col:'var(--rose)'},
+  ];
+  document.getElementById('xpSources').innerHTML=sources.map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border2)"><i class="ti ${s.icon}" style="font-size:16px;color:${s.col}"></i><span style="flex:1;font-size:13px">${s.src}</span><span style="font-family:var(--fm);font-size:13px;color:${s.col}">+${s.xp} XP</span></div>`).join('');
+
+  // Level roadmap
+  document.getElementById('levelRoadmap').innerHTML=LEVELS.slice(0,8).map(l=>{
+    const reached=xpData.total>=l.xp;
+    const current=li.level.lvl===l.lvl;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border2)">
+      <div style="width:24px;height:24px;border-radius:50%;background:${reached?'rgba(108,99,255,0.2)':'rgba(255,255,255,0.04)'};border:1.5px solid ${current?'var(--indigo)':reached?'rgba(108,99,255,0.4)':'var(--border2)'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${reached?'var(--lavender2)':'var(--muted)'}">
+        ${reached?l.lvl:'🔒'}
+      </div>
+      <span style="flex:1;font-size:12.5px;color:${reached?'var(--text)':'var(--muted)'}">${l.name}</span>
+      <span style="font-family:var(--fm);font-size:11px;color:${reached?'var(--mint)':'var(--muted)'}">${l.xp.toLocaleString()} XP</span>
+    </div>`;
+  }).join('');
+
+  const earned=xpData.total;
+  const badges=[
+    {name:'First Focus',icon:'🍅',e:xpData.sessions>=1},{name:'10 Sessions',icon:'⏱️',e:xpData.sessions>=10},
+    {name:'First Note',icon:'📝',e:xpData.notesCreated>=1},{name:'Note Taker',icon:'📚',e:xpData.notesCreated>=10},
+    {name:'Task Starter',icon:'✅',e:xpData.tasksCompleted>=1},{name:'Task Master',icon:'💪',e:xpData.tasksCompleted>=20},
+    {name:'Habit Builder',icon:'🔥',e:xpData.habitsChecked>=7},{name:'Goal Setter',icon:'🎯',e:goals.length>=1},
+    {name:'Level 5',icon:'⭐',e:li.level.lvl>=5},{name:'Scholar',icon:'🎓',e:li.level.lvl>=6},
+    {name:'Night Owl',icon:'🦉',e:false},{name:'Speed Runner',icon:'⚡',e:false},
+  ];
+  document.getElementById('badgeGrid').innerHTML=badges.map(b=>`<div class="badge ${b.e?'earned':'locked'}">${b.icon} ${b.name}${b.e?'':' <i class="ti ti-lock" style="font-size:10px"></i>'}</div>`).join('');
+}
+
+// ===================== LEADERBOARD =====================
+const lbData=[
+  {rank:1,name:'Arjun S.',institute:'IIT Delhi',hrs:37.0,badge:'🥇',me:false,av:'AS',avc:'#6C63FF'},
+  {rank:2,name:'Priya M.',institute:'IIT Delhi',hrs:34.5,badge:'🥈',me:false,av:'PM',avc:'#3DDBA8'},
+  {rank:3,name:profile.name||'You',institute:profile.institute||'IIT Delhi',hrs:32.4,badge:'🥉',me:true,av:(profile.name||'Y')[0]+'S',avc:'#F4C542'},
+  {rank:4,name:'Rahul K.',institute:'IIT Delhi',hrs:30.1,badge:'',me:false,av:'RK',avc:'#B8B5FF'},
+  {rank:5,name:'Sneha P.',institute:'IIT Delhi',hrs:28.8,badge:'',me:false,av:'SP',avc:'#FF6B8A'},
+  {rank:6,name:'Dev T.',institute:'IIT Delhi',hrs:27.2,badge:'',me:false,av:'DT',avc:'#7A7F9E'},
+  {rank:7,name:'Ananya R.',institute:'IIT Delhi',hrs:25.9,badge:'',me:false,av:'AR',avc:'#6C63FF'},
+  {rank:8,name:'Vikram J.',institute:'IIT Delhi',hrs:24.3,badge:'',me:false,av:'VJ',avc:'#3DDBA8'},
+];
+function renderLeaderboard(){
+  document.getElementById('lbList').innerHTML=lbData.map(p=>`
+    <div class="lb-row${p.me?' me':''}">
+      <div style="font-family:var(--fm);font-size:13px;font-weight:700;min-width:28px;color:${p.rank<=3?'var(--gold)':'var(--muted)'}">
+        ${p.rank<=3?p.badge:p.rank}
+      </div>
+      <div class="lb-av" style="background:${p.avc}22;color:${p.avc}">${p.av}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500">${p.name} ${p.me?'<span class="tag" style="background:rgba(108,99,255,0.15);color:var(--lavender);font-size:10px">you</span>':''}</div>
+        <div style="font-size:11px;color:var(--muted)">${p.institute}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--fm);font-size:13px;font-weight:600">${p.hrs}h</div>
+        <div style="font-size:10px;color:var(--muted)">this week</div>
+      </div>
+    </div>`).join('');
+}
+
+// ===================== PROFILE =====================
+function saveProfile(){
+  profile.name=document.getElementById('settingName').value.trim()||'Scholar';
+  profile.institute=document.getElementById('settingInstitute').value.trim();
+  profile.targetHours=parseInt(document.getElementById('settingTarget').value)||8;
+  save();updateSidebar();closeModal('settings');toast('Profile updated!');
+  renderDashboard();
+}
+
+// ===================== DASHBOARD =====================
+function renderDashboard(){
+  const now=new Date();
+  const h=now.getHours();
+  const greetWord=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('dashGreet').textContent=greetWord+', '+(profile.name||'Scholar')+'!';
+  document.getElementById('dashDate').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  const li=getLevelInfo();
+  document.getElementById('dashStats').innerHTML=`
+    <div class="stat-card"><div class="stat-val warn">${pomoData.sessionsToday}</div><div class="stat-label">Sessions today</div><div class="stat-change warn"><i class="ti ti-clock" style="font-size:11px"></i> Focus sessions</div></div>
+    <div class="stat-card"><div class="stat-val pos">${tasks.filter(t=>t.done).length}</div><div class="stat-label">Tasks completed</div><div class="stat-change pos"><i class="ti ti-check" style="font-size:11px"></i> Total done</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--lavender2)">${li.level.lvl}</div><div class="stat-label">Current level</div><div class="stat-change" style="color:var(--lavender)">${li.level.name}</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--gold)">${xpData.total.toLocaleString()}</div><div class="stat-label">Total XP</div><div class="stat-change pos">${li.pct}% to Level ${li.level.lvl+1}</div></div>
+  `;
+
+  const todayTasks=tasks.filter(t=>!t.done).slice(0,5);
+  document.getElementById('dashTasks').innerHTML=todayTasks.length?todayTasks.map(t=>taskRowHTML(t,true)).join(''):'<div class="empty" style="padding:20px 10px"><i class="ti ti-circle-check" style="font-size:24px;color:var(--mint);opacity:0.7"></i><div class="empty-sub" style="margin-top:6px">All done! 🎉</div></div>';
+
+  const todayIdx=(now.getDay()+6)%7;
+  const todayHabitsPreview=habits.slice(0,4);
+  document.getElementById('dashHabits').innerHTML=todayHabitsPreview.length?todayHabitsPreview.map(h=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2)">
+      <div style="width:9px;height:9px;border-radius:50%;background:${h.col};flex-shrink:0"></div>
+      <span style="flex:1;font-size:13px">${h.name}</span>
+      <div onclick="quickToggleHabit(${h.id},${todayIdx})" style="width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid ${h.days[todayIdx]?'transparent':'var(--border2)'};background:${h.days[todayIdx]?h.col+'33':'transparent'};color:${h.days[todayIdx]?h.col:'var(--muted)'};font-size:14px;transition:all 0.15s">
+        <i class="ti ${h.days[todayIdx]?'ti-check':'ti-minus'}"></i>
+      </div>
+    </div>`).join(''):'<div class="empty" style="padding:16px"><div class="empty-sub">No habits yet — <a onclick="nav(\'habits\')" style="color:var(--lavender);cursor:pointer">add one</a></div></div>';
+
+  document.getElementById('dashGoals').innerHTML=goals.length?goals.slice(0,3).map(g=>{
+    const pct=Math.min(100,Math.round(g.done/g.target*100));
+    return `<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+        <span style="font-size:12.5px;font-weight:500">${g.name}</span>
+        <span style="font-family:var(--fm);font-size:12px;color:${g.col}">${pct}%</span>
+      </div>
+      <div class="prog"><div class="prog-fill" style="width:${pct}%;background:${g.col}"></div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">${g.done}/${g.target}h · Due ${formatDate(g.deadline)}</div>
+    </div>`;}).join(''):'<div class="empty" style="padding:16px"><div class="empty-sub">No goals yet</div></div>';
+
+  document.getElementById('dashPomoTime').textContent=formatTime(pomoSecs);
+  document.getElementById('dashPomoStatus').textContent=pomoRunning?(pomoMode==='focus'?'🍅 Focus session active':'☕ Break active'):'Click to start a session';
+}
+
+// ===================== INIT =====================
+updateSidebar();
+setPomoMode('focus',0);
+renderDashboard();
+renderTasks();
+renderHabits();
+renderNotes();
+renderGoals();
+renderLeaderboard();
+
+// Keyboard shortcut: P = pomodoro, D = dashboard
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if(e.key==='p'||e.key==='P')nav('pomodoro');
+  if(e.key==='d'||e.key==='D')nav('dashboard');
+  if(e.key===' '){e.preventDefault();if(activePage==='pomodoro')togglePomo();}
+});
+</script>
+</body>
+</html>
